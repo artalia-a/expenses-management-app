@@ -7,10 +7,11 @@ import 'package:path/path.dart';
 import 'package:intl/intl.dart';
 
 class DatabaseInstance {
+  // Define database name
   final String databaseName = "expenses.db";
   final int databaseVersion = 2;
 
-  // Atribut di Model Transaksi
+// Define expenses table attributes
   final String tableName = 'expenses';
   final String id = 'id';
   final String total = 'total';
@@ -33,11 +34,13 @@ class DatabaseInstance {
     return openDatabase(path, version: databaseVersion, onCreate: _onCreate);
   }
 
+// Create table schema
   Future _onCreate(Database db, int version) async {
     await db.execute(
         'CREATE TABLE ${tableName} ($id INTEGER PRIMARY KEY, $total INTEGER, $name TEXT NULL, $financialSource TEXT NULL,  $createdAt TEXT NULL, $updatedAt TEXT NULL)');
   }
 
+// Display all list of expenses
   Future<List<ExpensesModel>> getAll() async {
     final db = await database();
     final data = await db.query(tableName, orderBy: '$id DESC');
@@ -46,12 +49,14 @@ class DatabaseInstance {
     return result;
   }
 
+// Add new expenses
   Future<int> insert(Map<String, dynamic> row) async {
     final db = await database(); // Ensure that the database is initialized
     final query = await db.insert(tableName, row);
     return query;
   }
 
+// Count the total of expenses each month
   Future<int> totalExpenses() async {
     final db = await database(); // Ensure that the database is initialized
 
@@ -69,6 +74,7 @@ class DatabaseInstance {
     return total;
   }
 
+// Delete expenses
   Future<int> delete(id) async {
     final db = await database();
     final query = await db.delete(tableName, where: '$id = ?', whereArgs: [id]);
@@ -76,6 +82,7 @@ class DatabaseInstance {
     return query;
   }
 
+// Update expenses
   Future<int> update(int id, Map<String, dynamic> row) async {
     final db = await database();
     final query =
@@ -83,6 +90,7 @@ class DatabaseInstance {
     return query;
   }
 
+// Show detail of expenses based on the selected id
   Future<ExpensesModel?> getExpenseById(int id) async {
     final db = await database();
     final List<Map<String, dynamic>> maps = await db.query(
@@ -101,6 +109,7 @@ class DatabaseInstance {
     }
   }
 
+  // Show recent expenses in the homepage with limit, e.g display only 5 expenses
   Future<List<ExpensesModel>> getRecentExpenses(int limit) async {
     final db = await database();
     final List<Map<String, dynamic>> maps = await db.query(
