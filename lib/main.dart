@@ -7,6 +7,8 @@ import 'package:my_app/screens/routes/update_screen.dart';
 import 'package:my_app/screens/routes/detail_screen.dart';
 import 'package:my_app/screens/expenses_screen.dart';
 import 'package:my_app/screens/profile_screen.dart';
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:my_app/utils/constants.dart';
 
 void main() {
   runApp(const MyApp());
@@ -72,24 +74,32 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(_appBarTitles[_selectedIndex]),
       ),
       body: _screens[_selectedIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
+      bottomNavigationBar: CurvedNavigationBar(
+        backgroundColor: Constants.scaffoldBackgroundColor,
+        buttonBackgroundColor: Color.fromRGBO(147, 99, 230, 1),
+        color: Color.fromRGBO(147, 99, 230, 1),
+        items: [
+          Icon(
+            Icons.home,
+            size: 30.0,
+            color: _selectedIndex == 0 ? Colors.white : Constants.activeMenu,
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.money),
-            label: 'Expenses',
+          Icon(
+            Icons.money,
+            size: 30.0,
+            color: _selectedIndex == 1 ? Colors.white : Constants.activeMenu,
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
+          Icon(
+            Icons.person,
+            size: 30.0,
+            color: _selectedIndex == 2 ? Colors.white : Constants.activeMenu,
           ),
         ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.blue,
-        onTap: _onItemTapped,
+        onTap: (index) {
+          setState(() {
+            _onItemTapped(index);
+          });
+        },
       ),
       drawer: Container(
         padding: const EdgeInsets.only(top: 40.0),
