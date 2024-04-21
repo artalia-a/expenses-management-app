@@ -1,7 +1,7 @@
 //import 'package:flutter/cupertino.dart';
 //import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:my_app/components/asset_image_widget.dart';
+//import 'package:my_app/components/asset_image_widget.dart';
 // import 'package:my_app/screens/routes/SecondScreen/second_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -18,6 +18,9 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Profile'),
+      ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [

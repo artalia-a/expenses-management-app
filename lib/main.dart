@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:my_app/screens/home_screen.dart';
 import 'package:my_app/screens/news_screen.dart';
 import 'package:my_app/screens/routes/create_screen.dart';
+import 'package:my_app/screens/routes/datas_screen.dart';
 import 'package:my_app/screens/routes/update_screen.dart';
 import 'package:my_app/screens/routes/detail_screen.dart';
 import 'package:my_app/screens/expenses_screen.dart';
@@ -27,6 +28,8 @@ class MyApp extends StatelessWidget {
         '/create-screen': (context) => const CreateScreen(),
         '/update-screen': (context) => const UpdateScreen(),
         '/expenses-screen': (context) => const ExpensesScreen(),
+        '/profile-screen': (context) => const ProfileScreen(),
+        '/datas-screen': (context) => const DatasScreen(),
       },
     );
   }
@@ -140,6 +143,13 @@ class _MyHomePageState extends State<MyHomePage> {
                 onTap: () {
                   Navigator.pop(context);
                   Navigator.pushNamed(context, '/news-screen');
+                },
+              ),
+              ListTile(
+                title: Text('Datas', style: TextStyle(color: Colors.white)),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, '/datas-screen');
                 },
               )
             ],
