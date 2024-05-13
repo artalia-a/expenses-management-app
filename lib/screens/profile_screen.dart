@@ -17,31 +17,51 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Profile'),
-      ),
-      body: Column(
+    return Container(
+      width: double.infinity,
+      // appBar: AppBar(
+      //   title: const Text('Profile'),
+      // ),
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            child: Text(
-              'Vanya Glamora A',
-              style: TextStyle(
-                  fontSize: 27,
-                  fontWeight: FontWeight.bold,
-                  color: Color.fromARGB(255, 121, 69, 225)),
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              children: [
+                Text(
+                  "Vanya Glamora",
+                  style: TextStyle(
+                    fontSize: 32,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
             ),
           ),
-          const Padding(
-            padding: EdgeInsets.only(left: 10, top: 10, bottom: 50),
-            child: CircleAvatar(
-              radius: 70,
-              backgroundImage: AssetImage('assets/images/jiwon.jpeg'),
-            ),
-          ),
-          const Padding(
+
+          const SizedBox(height: 30),
+
+          Expanded(
+              child: Container(
+            decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(60),
+                    topRight: Radius.circular(60))),
+            child: Container(
+              width: 500,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(top: 20, bottom: 20),
+                    child: CircleAvatar(
+                      radius: 70,
+                      backgroundImage: AssetImage('assets/images/jiwon.jpeg'),
+                    ),
+                  ),
+                   const Padding(
             padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -82,6 +102,18 @@ class ProfileScreen extends StatelessWidget {
               style: TextStyle(color: Color.fromARGB(240, 250, 247, 247)),
             ),
           )
+                ],
+              ),
+            ),
+          )),
+          // const Padding(
+          //   padding: EdgeInsets.only(left: 10, top: 10, bottom: 50),
+          //   child: CircleAvatar(
+          //     radius: 70,
+          //     backgroundImage: AssetImage('assets/images/jiwon.jpeg'),
+          //   ),
+          // ),
+         
         ],
       ),
     );

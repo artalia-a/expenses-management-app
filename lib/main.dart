@@ -2,13 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:my_app/screens/home_screen.dart';
 import 'package:my_app/screens/news_screen.dart';
 import 'package:my_app/screens/routes/create_screen.dart';
+import 'package:my_app/screens/routes/cs_screen.dart';
+import 'package:my_app/screens/routes/customer_support.dart';
 import 'package:my_app/screens/routes/datas_screen.dart';
+import 'package:my_app/screens/routes/edit_screen.dart';
+import 'package:my_app/screens/routes/review.dart';
 import 'package:my_app/screens/routes/update_screen.dart';
 import 'package:my_app/screens/routes/detail_screen.dart';
 import 'package:my_app/screens/expenses_screen.dart';
 import 'package:my_app/screens/profile_screen.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:my_app/utils/constants.dart';
+import 'package:my_app/screens/routes/edit_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -32,6 +37,9 @@ class MyApp extends StatelessWidget {
         '/expenses-screen': (context) => const ExpensesScreen(),
         '/profile-screen': (context) => const ProfileScreen(),
         '/datas-screen': (context) => const DatasScreen(),
+        '/customer_support-screen': (context) => const CustomerSupport(),
+        '/cs-screen': (context) => const CsScreen(),
+        '/review-screen': (context) => const Review(),
       },
     );
   }
@@ -72,12 +80,16 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(_appBarTitles[_selectedIndex]),
+        backgroundColor: Colors.transparent,
       ),
+      backgroundColor: _selectedIndex == 2
+          ? const Color.fromRGBO(147, 99, 230, 1)
+          : Colors.white,
       body: _screens[_selectedIndex],
       bottomNavigationBar: CurvedNavigationBar(
         backgroundColor: Constants.scaffoldBackgroundColor,
-        buttonBackgroundColor: Color.fromRGBO(147, 99, 230, 1),
-        color: Color.fromRGBO(147, 99, 230, 1),
+        buttonBackgroundColor: const Color.fromRGBO(147, 99, 230, 1),
+        color: const Color.fromRGBO(147, 99, 230, 1),
         items: [
           Icon(
             Icons.home,
@@ -160,6 +172,14 @@ class _MyHomePageState extends State<MyHomePage> {
                 onTap: () {
                   Navigator.pop(context);
                   Navigator.pushNamed(context, '/datas-screen');
+                },
+              ),
+              ListTile(
+                title: Text('Customer Support',
+                    style: TextStyle(color: Colors.white)),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, '/customer_support-screen');
                 },
               )
             ],

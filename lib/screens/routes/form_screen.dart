@@ -71,6 +71,8 @@ class _FormScreenState extends State<FormScreen> {
     );
   }
 
+  int _rating = 0;
+
   @override
   void dispose() {
     _titleController.dispose(); // Dispose of controller when widget is removed
@@ -227,6 +229,68 @@ class _FormScreenState extends State<FormScreen> {
                           ],
                         ),
                       ),
+                      SizedBox(
+                        height: 50,
+                      ),
+                      Container(
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10),
+                              boxShadow: const [
+                                BoxShadow(
+                                    color: Color.fromRGBO(225, 95, 27, .3),
+                                    blurRadius: 20,
+                                    offset: Offset(0, 10))
+                              ]),
+                          child: Column(children: [
+                            Padding(
+                              padding:
+                                  EdgeInsets.only(top: 30, left: 20, right: 20),
+                              child: Text(
+                                "Share Your Experience, Rate Us Now!",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 15),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 30,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: List.generate(5, (index) {
+                                if (index < _rating) {
+                                  return GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        _rating = index +
+                                            1; // Update rating saat pengguna menyentuh bintang
+                                      });
+                                    },
+                                    child: Icon(
+                                      Icons.star,
+                                      size: 30,
+                                      color: Color.fromARGB(255, 235, 213, 23),
+                                    ),
+                                  );
+                                } else {
+                                  return GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        _rating = index +
+                                            1; // Update rating saat pengguna menyentuh bintang
+                                      });
+                                    },
+                                    child: Icon(
+                                      Icons.star_border,
+                                      size: 30,
+                                      color: Colors.grey,
+                                    ),
+                                  );
+                                }
+                              }),
+                            ),
+                          ]))
                     ],
                   ),
                 ),

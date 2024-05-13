@@ -1,139 +1,52 @@
-// ignore_for_file: library_private_types_in_public_api
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:my_app/components/bottom_up_transition.dart';
-import 'package:my_app/dto/datas.dart';
+import 'package:my_app/dto/cs.dart'; // Menggunakan DTO Cs yang baru
 import 'package:my_app/endpoints/endpoints.dart';
+import 'package:my_app/screens/routes/cs_screen.dart';
+import 'package:my_app/screens/routes/edit_screen.dart';
 import 'package:my_app/screens/routes/form_screen.dart';
-import 'package:my_app/services/data_service.dart';
 import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:my_app/dto/cs.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:my_app/services/data_service.dart';
+import 'package:http/http.dart' as http;
+import 'package:path/path.dart';
 
-class DatasScreen extends StatefulWidget {
-  const DatasScreen({Key? key}) : super(key: key);
+class Review extends StatefulWidget {
+  const Review({Key? key}) : super(key: key);
 
   @override
-  _DatasScreenState createState() => _DatasScreenState();
+  _ReviewState createState() => _ReviewState();
 }
 
-class _DatasScreenState extends State<DatasScreen> {
-  Future<List<Datas>>? _datas;
+class _ReviewState extends State<Review> {
+  Future<List<Cs>>? _cs;
 
-  Future<void> deleteDatas(int id) async {
-    try {
-      await DataService.deleteDatas(
-          id); // Panggil metode deleteDatas dari DataService
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Data deleted successfully"),
-        ),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Failed to delete data"),
-        ),
-      );
+  //fungsi delete
+  static Future<void> deleteCutomerService(int idCustomerService) async {
+    final url = Uri.parse('${Endpoints.cs}/$idCustomerService');
+    final response = await http.delete(url);
+    if (response.statusCode != 200) {
+      throw Exception('Failed to delete data');
     }
-  }
-
-  //sini
-
-  final _titleController = TextEditingController();
-  String _title = "";
-  File? galleryFile;
-  final picker = ImagePicker();
-
-  _showPicker({
-    required BuildContext context,
-  }) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return SafeArea(
-          child: Wrap(
-            children: <Widget>[
-              ListTile(
-                leading: const Icon(Icons.photo_library),
-                title: const Text('Photo Library'),
-                onTap: () {
-                  getImage(ImageSource.gallery);
-                  Navigator.of(context).pop();
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.photo_camera),
-                title: const Text('Camera'),
-                onTap: () {
-                  getImage(ImageSource.camera);
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Future getImage(
-    ImageSource img,
-  ) async {
-    final pickedFile = await picker.pickImage(source: img);
-    XFile? xfilePick = pickedFile;
-    setState(
-      () {
-        if (xfilePick != null) {
-          galleryFile = File(pickedFile!.path);
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Nothing is selected')));
-        }
-      },
-    );
   }
 
   @override
+
+  //The code fetches customer service data from a data service that may operate asynchronously or indirectly.
   void initState() {
     super.initState();
-    _datas = DataService.fetchDatas();
-  }
-
-  //sini
-
-  //sini
-  Future<void> _postDataWithImage(BuildContext context) async {
-    if (galleryFile == null) {
-      return; // Handle case where no image is selected
-    }
-
-    var request = MultipartRequest('POST', Uri.parse(Endpoints.datas));
-    request.fields['name'] = _titleController.text; // Add other data fields
-
-    var multipartFile = await MultipartFile.fromPath(
-      'image',
-      galleryFile!.path,
-    );
-    request.files.add(multipartFile);
-
-    request.send().then((response) {
-      // Handle response (success or error)
-      if (response.statusCode == 201) {
-        debugPrint('Data and image posted successfully!');
-        Navigator.pushReplacementNamed(context, '/datas-screen');
-      } else {
-        debugPrint('Error posting data: ${response.statusCode}');
-      }
-    });
+    _cs = DataService.fetchCustomerService();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Data List'),
+        title: const Text('Review'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -141,8 +54,9 @@ class _DatasScreenState extends State<DatasScreen> {
           },
         ),
       ),
-      body: FutureBuilder<List<Datas>>(
-        future: _datas,
+      body: FutureBuilder<List<Cs>>(
+        // Menggunakan FutureBuilder dengan tipe Cs
+        future: _cs, // Menggunakan _cs yang sesuai dengan DTO Cs
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             final data = snapshot.data!;
@@ -157,9 +71,9 @@ class _DatasScreenState extends State<DatasScreen> {
                             Image.network(
                               fit: BoxFit.fitWidth,
                               width: 350,
-                              // Update URL to use item.imageUrl directly
+                              // Menggunakan item.imageUrl dari DTO Cs
                               Uri.parse(
-                                      '${Endpoints.baseURLLive}/public/${item.imageUrl!}')
+                                      '${Endpoints.baseURLLive}/public/${item.imageUrl}')
                                   .toString(),
                               errorBuilder: (context, error, stackTrace) =>
                                   const Icon(Icons.error),
@@ -168,27 +82,72 @@ class _DatasScreenState extends State<DatasScreen> {
                         )
                       : null,
                   subtitle: Column(children: [
-                    Text('Name : ${item.name}',
-                        style: GoogleFonts.poppins(
-                          fontSize: 14,
-                          color: const Color.fromARGB(255, 36, 31, 31),
-                          fontWeight: FontWeight.normal,
-                        )),
-                    const SizedBox(
-                      height: 5,
+                    Text(
+                      'NIM : ${item.nim}', // Menggunakan item.nim dari DTO Cs
+                      style: GoogleFonts.poppins(
+                        fontSize: 14,
+                        color: const Color.fromARGB(255, 36, 31, 31),
+                        fontWeight: FontWeight.normal,
+                      ),
                     ),
+                    const SizedBox(height: 5),
+                    Text(
+                      'Title Issue : ${item.titleIssues}',
+                      style: GoogleFonts.poppins(
+                        fontSize: 14,
+                        color: const Color.fromARGB(255, 36, 31, 31),
+                        fontWeight: FontWeight.normal,
+                      ),
+                    ),
+
+                    Text(
+                      'Description : ${item.descriptionIssues}',
+                      style: GoogleFonts.poppins(
+                        fontSize: 14,
+                        color: const Color.fromARGB(255, 36, 31, 31),
+                        fontWeight: FontWeight.normal,
+                      ),
+                    ),
+                    //fungsi untuk menampilkan rating
+                    RatingBar(
+                      minRating: 1,
+                      maxRating: 5,
+                      ignoreGestures: true,
+                      allowHalfRating: false,
+                      initialRating: item.rating.toDouble(),
+                      ratingWidget: RatingWidget(
+                        full: const Icon(
+                          Icons.star,
+                          color: Colors.amber,
+                        ),
+                        half: const Icon(
+                          Icons.star_half,
+                          color: Colors.amber,
+                        ),
+                        empty: const Icon(
+                          Icons.star_border,
+                          color: Colors.amber,
+                        ),
+                      ),
+                      onRatingUpdate: (double ratings) {},
+                    ),
+                    // Tambahkan tombol edit dan delete sesuai kebutuhan Anda di sini
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        //for update
                         IconButton(
-                          icon: Icon(Icons.edit),
-                          onPressed: () {
-                            _showPicker(context: context).then((_) {
-                              // Update the UI after picking an image
-                              setState(() {});
-                            });
-                          },
-                        ),
+                            icon: Icon(Icons.update),
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => EditScreen(
+                                          CsEdit:
+                                              item))); //menuju ke screen update atau edit
+                            }),
+
+                        //for delete
                         IconButton(
                           icon: Icon(Icons.delete),
                           onPressed: () {
@@ -210,8 +169,8 @@ class _DatasScreenState extends State<DatasScreen> {
                                       child: Text("Delete"),
                                       onPressed: () async {
                                         try {
-                                          await deleteDatas(
-                                              data[index].idDatas);
+                                          await deleteCutomerService(
+                                              data[index].idCustomerService);
                                           ScaffoldMessenger.of(context)
                                               .showSnackBar(
                                             SnackBar(
@@ -239,7 +198,7 @@ class _DatasScreenState extends State<DatasScreen> {
                         ),
                       ],
                     ),
-                    const Divider()
+                    const Divider(),
                   ]),
                 );
               },
@@ -251,10 +210,10 @@ class _DatasScreenState extends State<DatasScreen> {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: const Color.fromARGB(255, 54, 40, 176),
+        backgroundColor: Color.fromARGB(255, 116, 48, 184),
         tooltip: 'Increment',
         onPressed: () {
-          Navigator.push(context, BottomUpRoute(page: const FormScreen()));
+          Navigator.push(context, BottomUpRoute(page: const CsScreen()));
         },
         child: const Icon(Icons.add, color: Colors.white, size: 28),
       ),

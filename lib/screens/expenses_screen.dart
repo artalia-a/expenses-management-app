@@ -29,7 +29,7 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Expenses')),
+      // appBar: AppBar(title: Text('Expenses')),
       body: SingleChildScrollView(
         child: Column(
           children: [
