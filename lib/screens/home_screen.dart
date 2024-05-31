@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/painting.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_app/cubit/counter_cubit.dart';
 import 'package:my_app/db/database_instance.dart';
 import 'package:my_app/dto/expenses.dart';
 import 'package:intl/intl.dart';
@@ -223,17 +225,16 @@ class _HomeScreenState extends State<HomeScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Padding(
-                                padding:
-                                    const EdgeInsets.only(left: 15, top: 5),
-                                child: Text(
-                                  'Rp. ${NumberFormat('#,##0', 'id_ID').format(expense.total)}',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18,
-                                    color: Color.fromARGB(255, 121, 69, 225),
-                                  ),
-                                ),
-                              ),
+                                  padding:
+                                      const EdgeInsets.only(left: 15, top: 5),
+                                  child: Text(
+                                    'Rp. ${NumberFormat('#,##0', 'id_ID').format(expense.total)}',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                      color: Color.fromARGB(255, 121, 69, 225),
+                                    ),
+                                  )),
                               Padding(
                                 padding:
                                     const EdgeInsets.only(left: 15, top: 5),

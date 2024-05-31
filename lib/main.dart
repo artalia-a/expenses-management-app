@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_app/components/auth_wrapper.dart';
+import 'package:my_app/cubit/auth/cubit/auth_cubit.dart';
+import 'package:my_app/cubit/counter_cubit.dart';
+import 'package:my_app/dto/balance.dart';
 import 'package:my_app/screens/home_screen.dart';
+import 'package:my_app/screens/login_screen.dart';
 import 'package:my_app/screens/news_screen.dart';
+import 'package:my_app/screens/routes/counter_screen.dart';
 import 'package:my_app/screens/routes/create_screen.dart';
 import 'package:my_app/screens/routes/cs_screen.dart';
 import 'package:my_app/screens/routes/customer_support.dart';
@@ -12,8 +19,18 @@ import 'package:my_app/screens/routes/detail_screen.dart';
 import 'package:my_app/screens/expenses_screen.dart';
 import 'package:my_app/screens/profile_screen.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:my_app/screens/routes/welcome_screen.dart';
+import 'package:my_app/services/data_service.dart';
 import 'package:my_app/utils/constants.dart';
 import 'package:my_app/screens/routes/edit_screen.dart';
+import 'package:my_app/screens/routes/BalanceScreen/balance_screen.dart';
+import 'package:my_app/screens/routes/SpendingScreen/spending_form_screen.dart';
+import 'package:my_app/screens/routes/SpendingScreen/spending_screen.dart';
+import 'package:my_app/cubit/balance/cubit/balance_cubit.dart';
+import 'package:my_app/cubit/auth/cubit/auth_cubit.dart';
+import 'package:my_app/components/auth_wrapper.dart';
+import 'package:my_app/screens/login_screen.dart';
+import 'package:my_app/utils/secure_storage_util.dart';
 
 void main() {
   runApp(const MyApp());
@@ -24,24 +41,38 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const MyHomePage(title: 'Home Screen'),
-      routes: {
-        '/news-screen': (context) => const NewsScreen(),
-        '/create-screen': (context) => const CreateScreen(),
-        '/update-screen': (context) => const UpdateScreen(),
-        '/expenses-screen': (context) => const ExpensesScreen(),
-        '/profile-screen': (context) => const ProfileScreen(),
-        '/datas-screen': (context) => const DatasScreen(),
-        '/customer_support-screen': (context) => const CustomerSupport(),
-        '/cs-screen': (context) => const CsScreen(),
-        '/review-screen': (context) => const Review(),
-      },
-    );
+    return MultiBlocProvider(
+        providers: [
+          BlocProvider<CounterCubit>(create: (context) => CounterCubit()),
+          BlocProvider<BalanceCubit>(create: (context) => BalanceCubit()),
+          BlocProvider<AuthCubit>(create: (context) => AuthCubit()),
+        ],
+        child: MaterialApp(
+          title: 'Flutter Demo',
+          theme: ThemeData(
+            primarySwatch: Colors.blue,
+          ),
+          home: const LoginScreen(),
+          routes: {
+            '/home-screen': (context) => const AuthWrapper(
+                  child: MyHomePage(title: 'Home Screen'),
+                ),
+            '/news-screen': (context) => const NewsScreen(),
+            '/create-screen': (context) => const CreateScreen(),
+            '/update-screen': (context) => const UpdateScreen(),
+            '/expenses-screen': (context) => const ExpensesScreen(),
+            '/profile-screen': (context) => const ProfileScreen(),
+            '/datas-screen': (context) => const DatasScreen(),
+            '/customer_support-screen': (context) => const CustomerSupport(),
+            '/cs-screen': (context) => const CsScreen(),
+            '/review-screen': (context) => const Review(),
+            '/counter-screen': (context) => const CounterScreen(),
+            '/welcome-screen': (context) => const WelcomeScreen(),
+            '/balance-screen': (context) => const BalanceScreen(),
+            '/spending-screen': (context) => const SpendingScreen(),
+            '/login-screen': (context) => const LoginScreen(),
+          },
+        ));
   }
 }
 
@@ -73,6 +104,15 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  Future<void> doLogout(context) async {
+    debugPrint("need logout");
+    final response = await DataService.logoutData();
+    if (response.statusCode == 200) {
+      await SecureStorageUtil.storage.delete(key: tokenStoreName);
+      Navigator.pushReplacementNamed(context, "/login-screen");
+    }
   }
 
   @override
@@ -160,8 +200,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 },
               ),
               ListTile(
-                title:
-                    Text('Latihan API', style: TextStyle(color: Colors.white)),
+                title: Text('News', style: TextStyle(color: Colors.white)),
                 onTap: () {
                   Navigator.pop(context);
                   Navigator.pushNamed(context, '/news-screen');
@@ -181,7 +220,54 @@ class _MyHomePageState extends State<MyHomePage> {
                   Navigator.pop(context);
                   Navigator.pushNamed(context, '/customer_support-screen');
                 },
-              )
+              ),
+              ListTile(
+                title: Text('Counter Screen',
+                    style: TextStyle(color: Colors.white)),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, '/counter-screen');
+                },
+              ),
+              ListTile(
+                title: Text('Welcome Screen',
+                    style: TextStyle(color: Colors.white)),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, '/welcome-screen');
+                },
+              ),
+              ListTile(
+                title: Text('Balance Screen',
+                    style: TextStyle(color: Colors.white)),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, '/balance-screen');
+                },
+              ),
+              ListTile(
+                title: Text('Spending Screen',
+                    style: TextStyle(color: Colors.white)),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, '/spending-screen');
+                },
+              ),
+              ListTile(
+                title:
+                    Text('Login Screen', style: TextStyle(color: Colors.white)),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, '/login-screen');
+                },
+              ),
+              ListTile(
+                title:
+                    const Text('Logout', style: TextStyle(color: Colors.white)),
+                onTap: () {
+                  doLogout(context);
+                },
+              ),
             ],
           ),
         ),

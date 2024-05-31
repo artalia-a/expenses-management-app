@@ -8,4 +8,8 @@ class Endpoints {
   static const String news = "$baseURL/news";
   static const String datas = "$baseURLLive/api/datas";
   static const String cs = "$baseURLLive/api/customer-service/2215091072";
+  static const String balance = "$baseURLLive/api/balance/2215091072";
+  static const String spending = "$baseURLLive/api/spending/2215091072";
+  static const String login = "$baseURLLive/api/auth/login";
+  static const String logout = "$baseURLLive/api/auth/logout";
 }
